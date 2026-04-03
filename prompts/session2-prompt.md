@@ -1,4 +1,4 @@
-You are working on the ByteBooks React frontend application. In the previous session (Session 1), you added full CRUD functionality with forms to add, edit, and delete books. Now you will transform the entire application into a professional SaaS-style admin dashboard.
+You are working on the ByteBooks React frontend application. In the previous session (Session 1, check v1 folder), you added full CRUD functionality with forms to add, edit, and delete books. Now you will transform the entire application into a professional SaaS-style admin dashboard.
 
 The backend FastAPI server is running on http://localhost:8000 with these endpoints:
 - GET /api/books - Returns list of all books

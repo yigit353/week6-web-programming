@@ -1,4 +1,4 @@
-You are working on the ByteBooks React frontend application that was built in Week 5. The app currently displays a list of books with search functionality, and has individual book detail views. The backend FastAPI server is running on http://localhost:8000 with the following relevant endpoints:
+You are working on the ByteBooks React frontend application that was built in Week 4 (check week4 folder). The app currently displays a list of books with search functionality, and has individual book detail views. The backend FastAPI server is running on http://localhost:8000 with the following relevant endpoints:
 
 - GET /api/books - Returns list of all books
 - GET /api/books/{id} - Returns a single book by ID
