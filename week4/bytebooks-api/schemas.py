@@ -67,6 +67,7 @@ class BookCreate(BaseModel):
     isbn: Optional[str] = Field(default=None, pattern=r"^(\d{10}|\d{13})$")
     price: float = Field(gt=0)
     stock: int = Field(default=0, ge=0)
+    genre: str = Field(default="", max_length=50)
 
 
 class BookUpdate(BaseModel):

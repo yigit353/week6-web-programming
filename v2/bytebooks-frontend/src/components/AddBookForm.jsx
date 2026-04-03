@@ -128,6 +128,7 @@ function AddBookForm({ onBookAdded, onCancel }) {
           author_id: Number(formData.author_id),
           price: Number(formData.price),
           isbn: formData.isbn,
+          genre: formData.genre,
           stock: Number(formData.stock),
         }),
       });
@@ -234,8 +235,6 @@ function AddBookForm({ onBookAdded, onCancel }) {
         </div>
 
         {/* ── Genre ──────────────────────────────────────────────────────── */}
-        {/* Genre is shown in the UI for a better UX but is not sent to the
-            API since the current backend schema does not include this field. */}
         <div className="form-group">
           <label htmlFor="genre" className="form-label">Genre</label>
           <select

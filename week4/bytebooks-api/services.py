@@ -70,7 +70,7 @@ class BookService:
             isbn=book_data.isbn if book_data.isbn is not None else "",
             price=book_data.price,
             stock=book_data.stock,
-            genre="",
+            genre=book_data.genre,
         )
         db.add(book)
         db.commit()
