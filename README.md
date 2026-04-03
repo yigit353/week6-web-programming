@@ -162,3 +162,70 @@ week6-web-programming/
 - [ ] App shows error message with retry button if backend is down
 - [ ] Forms disable submit button during submission to prevent duplicates
 - [ ] Empty search/filter shows "No books found" message
+
+## Bug Case Study: The Phantom Genre Field
+
+### What Went Wrong
+
+The genre field appeared fully functional in the UI — users could select a genre when adding or editing a book — but the selected value was never persisted. Newly created books showed "—" instead of the chosen genre, and editing a book's genre had no effect.
+
+The bug spanned **three layers**, making it a good example of how a single oversight can slip through an entire stack:
+
+| Layer | File | Problem |
+|-------|------|---------|
+| Backend schema | `schemas.py` — `BookCreate` | No `genre` field, so the API silently ignored it in POST requests |
+| Backend schema | `schemas.py` — `BookUpdate` | No `genre` field, so the API silently ignored it in PUT requests |
+| Backend service | `services.py` — `create_book()` | Genre hardcoded to `""` instead of using the request value |
+| Frontend | `AddBookForm.jsx` — `handleSubmit` | Genre omitted from the `JSON.stringify` body sent to POST `/books` |
+| Frontend | `EditBookForm.jsx` — `handleSubmit` | Genre omitted from the `JSON.stringify` body sent to PUT `/books/{id}` |
+
+The ironic part: the **prompt that generated the code** explicitly said to include genre in both POST and PUT bodies. The AI code generator added the genre dropdown to the form UI but forgot to wire it through the API call and backend schema — a classic case of UI-complete but data-incomplete implementation.
+
+### How We Fixed It
+
+**Backend — `schemas.py`** (2 lines added):
+```python
+# In BookCreate:
+genre: str = Field(default="", max_length=50)
+
+# In BookUpdate:
+genre: Optional[str] = Field(default=None, max_length=50)
+```
+
+**Backend — `services.py`** (1 line changed):
+```python
+# Before:
+genre="",
+# After:
+genre=book_data.genre,
+```
+
+**Frontend — `AddBookForm.jsx`** (1 line added to POST body):
+```javascript
+genre: formData.genre,
+```
+
+**Frontend — `EditBookForm.jsx`** (1 line added to PUT body):
+```javascript
+genre: formData.genre,
+```
+
+### Regression Tests
+
+We added `test_genre.py` with three tests to prevent this from happening again:
+
+```bash
+cd week4/bytebooks-api
+source venv/bin/activate
+python -m pytest test_genre.py -v
+```
+
+| Test | What It Verifies |
+|------|-----------------|
+| `test_create_book_with_genre` | Genre sent in POST is persisted and returned |
+| `test_create_book_genre_default_empty` | Omitting genre defaults to empty string |
+| `test_update_book_genre` | Genre sent in PUT updates the existing value |
+
+### Takeaway
+
+When AI generates full-stack code, **always verify that form fields flow end-to-end**: from the UI input, through the fetch call body, into the API schema, and down to the database write. A field can look fully wired in the UI while being silently dropped at any layer in between.
