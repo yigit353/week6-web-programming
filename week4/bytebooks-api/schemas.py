@@ -77,6 +77,7 @@ class BookUpdate(BaseModel):
     isbn: Optional[str] = Field(default=None, pattern=r"^(\d{10}|\d{13})$")
     price: Optional[float] = Field(default=None, gt=0)
     stock: Optional[int] = Field(default=None, ge=0)
+    genre: Optional[str] = Field(default=None, max_length=50)
 
 
 class BookResponse(BaseModel):

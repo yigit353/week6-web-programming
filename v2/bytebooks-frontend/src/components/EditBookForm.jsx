@@ -104,6 +104,7 @@ function EditBookForm({ book, onBookUpdated, onCancel }) {
         title: formData.title.trim(),
         price: Number(formData.price),
         isbn: formData.isbn.trim(),
+        genre: formData.genre,
         stock: Number(formData.stock),
       };
 

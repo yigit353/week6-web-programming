@@ -1,11 +1,9 @@
 """
-test_genre.py - Regression test for genre field in book creation
-================================================================
+test_genre.py - Regression tests for genre field in book CRUD
+==============================================================
 
-Verifies that the genre field sent during book creation is persisted
-and returned in the API response. This was a bug where genre was
-accepted in the UI but never sent to the backend, and the backend
-hardcoded genre to an empty string.
+Verifies that the genre field is correctly persisted and returned
+during both book creation (POST) and book update (PUT).
 """
 
 import pytest
@@ -83,3 +81,27 @@ def test_create_book_genre_default_empty(client):
     assert resp.status_code == 201
     data = resp.json()
     assert data["genre"] == ""
+
+
+def test_update_book_genre(client):
+    """Genre value sent in PUT /books/{id} should be persisted and returned."""
+    author_id = _create_author(client)
+
+    # Create a book with genre "Fiction"
+    create_resp = client.post("/books", json={
+        "title": "Update Test",
+        "author_id": author_id,
+        "price": 15.00,
+        "isbn": "1111111111",
+        "genre": "Fiction",
+        "stock": 2,
+    })
+    assert create_resp.status_code == 201
+    book_id = create_resp.json()["id"]
+
+    # Update genre to "Non-Fiction"
+    update_resp = client.put(f"/books/{book_id}", json={
+        "genre": "Non-Fiction",
+    })
+    assert update_resp.status_code == 200
+    assert update_resp.json()["genre"] == "Non-Fiction"
